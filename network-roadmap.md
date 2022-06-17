@@ -230,11 +230,11 @@ endsystem과 router를 연결하는 방법
     - 만약 점유하고 있는 circuit에서 정보를 보내지 않는 시간동안은 회선이 낭비되게 된다. ➡️ 비효율적 자원 사용
     - ➡️ data network에서는 불규칙적 request가 발생하는데 비효율적으로 자원을 사용하게 됨
 - 자원 할당 방법
-    <img width="687" alt="스크린샷 2022-06-17 오후 6 00 43" src="https://user-images.githubusercontent.com/81469717/174300294-67505610-fd89-44ae-9f23-7975347494e9.png">
-
-    - **`FDM (Frequency Division Multiplexing)`** : frequency를 분할
-    - `**TDM**(**(Time Division Multiplexing))**` : 시분할
+    - `FDM (Frequency Division Multiplexing)` : frequency를 분할
+    - `TDM(Time Division Multiplexing)` : 시분할
     - `multiplexing` : 여러 신호가 단일 데이터 링크를 통해 동시에 전송되는 기술
+<img width="687" alt="스크린샷 2022-06-17 오후 6 00 43" src="https://user-images.githubusercontent.com/81469717/174300294-67505610-fd89-44ae-9f23-7975347494e9.png">
+
 
 ### 2. Packet switching
 <img width="687" alt="스크린샷 2022-06-17 오후 6 05 19" src="https://user-images.githubusercontent.com/81469717/174300347-0de53806-1e66-4866-ba37-296d42792480.png">
@@ -245,22 +245,24 @@ endsystem과 router를 연결하는 방법
 - 각 packet은 `full link capacity` 를 사용해서 전송됨 (회선 효율성이 높음)
 - 각 packet에는 목적지 주소가 명시되어 있음
 - `router` 는 모든 packet이 도착할때 까지 packet을 일시적으로 `store` & 모두 도착하면 주소를 보고 `forward`
+- 먼저 들어온 data가 모두 전송될 때까지 기다림
     
 
 >💡 `비연결형 패킷 교환` : 각 패킷의 헤더에 소스주소, 목적지 주소, 총 조각수, 시퀀스 번호가 저장되어있기때문에 각 패킷을 다른 경로를 통해 따로 전송 가능
-    
+
+
  <img width="687" alt="스크린샷 2022-06-17 오후 6 13 36" src="https://user-images.githubusercontent.com/81469717/174300404-0416e674-3420-485e-838b-ae85a398260c.png">
 
-- 먼저 들어온 data가 모두 전송될 때까지 기다림
-- **문제점** :
-    <img width="687" alt="스크린샷 2022-06-17 오후 6 18 25" src="https://user-images.githubusercontent.com/81469717/174300516-9f37d301-d70a-4e6b-a4df-82c44950eb88.png">
-
+- **문제점** 
     - data가 모두 전송될 때까지 link를 독점
     - `queing delay`. `loss` 발생가능
     - 뽑아주는 속도보다 흘러들어오는 속도가 빠를 때 가능
     - packet은 다른 링크로 송신될 때까지 `queue` 에 저장됨
     - packet이 쌓이면 buffer가 꽉차게될 수 있음 , 이때 loss 발생 가능
     - `congestion` : `queing delay` , `loss` 가 심한 현산
+
+<img width="687" alt="스크린샷 2022-06-17 오후 6 18 25" src="https://user-images.githubusercontent.com/81469717/174300516-9f37d301-d70a-4e6b-a4df-82c44950eb88.png">
+
 
 ### Packet switching 🆚 Circuit Switching
 
@@ -287,8 +289,6 @@ endsystem과 router를 연결하는 방법
 
 ### `IXP` & `peering link`
 
-![스크린샷 2022-06-17 오후 6.48.03.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/fff5e81a-cd96-4c3a-bcfd-d6661405b2bb/스크린샷_2022-06-17_오후_6.48.03.png)
-
 - `IXP(Internet Exchange Point)` : ISP끼리 연결하는 걸 담당하는 사업자
     - 보통 한 빌딩에 자사의 switche들을 두고 있음
     - 300여개의 IXP 존재
@@ -301,15 +301,14 @@ endsystem과 router를 연결하는 방법
 <img width="687" alt="스크린샷 2022-06-17 오후 6 39 02" src="https://user-images.githubusercontent.com/81469717/174300894-edf58e93-9db7-43a1-87d2-5f216a582a8d.png">
 <img width="687" alt="스크린샷 2022-06-17 오후 6 41 01" src="https://user-images.githubusercontent.com/81469717/174300943-bfaea946-5bb5-4da2-85d7-1ced956afa82.png">
 
-
 - `Access ISP` 들은 지역의 `Reginol ISP` 에 연결됨
 - `Reginol ISP` 는 다시 `global ISP` 에게 연결
 - multi-tire hierachy: 작은 지역의  `Reginol ISP` 는 또 다시 더 큰 지역의 `Reginol ISP` 에 연결
 - `peering link` 로 cost, delay 감소 효과
 
 ### `Tier-1 ISP`
+<img width="687" alt="스크린샷 2022-06-17 오후 6 45 24" src="https://user-images.githubusercontent.com/81469717/174301574-a0b075f1-ed3f-4643-81a9-306ce5827eba.png">
 
-![스크린샷 2022-06-17 오후 6.45.24.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f893507e-01a7-4322-bb3f-7b61f8567c40/스크린샷_2022-06-17_오후_6.45.24.png)
 
 - 전세계를 묶는 건 `1st tier ISP`
 - Sprint, AT&T, Orange등 15개 존재
@@ -336,4 +335,5 @@ endsystem과 router를 연결하는 방법
 - 1st tier-ISP, 일부 Reginoal ISP에 연결
 
 총정리
+
 <img width="687" alt="스크린샷 2022-06-17 오후 7 15 53" src="https://user-images.githubusercontent.com/81469717/174301179-c016034e-aad8-45b5-ad8e-5159fc3a9b33.png">
