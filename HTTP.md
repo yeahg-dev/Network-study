@@ -100,3 +100,71 @@
 - 404 Not Found
     - 데이터가 서버에 없음
     - 505 HTPP Version Not Supported
+
+<br>
+
+## User-server state:  Cookies🍪
+
+🍪: 클라이언트에대한 정보를 저장. 
+
+### 목적
+서버에서 클라이언트와의 트랜잭션 스토리를 유지하기 위해 사용
+
+### 쿠키 매커니즘
+1. HTTP Response 메시지에 쿠키 헤더 라인을 함께 보냄
+2. 다음 HTTP Request 메시지에 쿠키 헤더 라인을 보냄
+3. 쿠키 파일은 사용자의 호스트, browser에 의해 저장되고 관리
+4. web site의 back-end database에도 저장 
+
+### 예시
+<img width="565" alt="스크린샷 2022-09-05 오전 12 35 39" src="https://user-images.githubusercontent.com/81469717/189075120-31e85cbd-d7b9-4d3a-bedf-74e9070d0b62.png">
+
+1. 수잔이 인터넷에 접속
+2. 어떠한 커머스 사이트를 처음으로 방문
+3. 첫 HTTP 요청이 들어오면, 서버는 **유니크한 ID**를 생성해서 **쿠키 헤더라인(set-cookie: 1678)**에 실어서 보냄. 
+4. 또한 backend database에서 ID를 위한 저장공간인 **entry**를 만듦, 여기엔 수잔과 주고 받은 **상호작용들이 기록됨**
+5. 브라우저는 쿠키 파일에 ID를 저장
+6. 커머스 사이트에 요청을 보낼 때마다 **쿠키 헤더 라인 (cookie: 1678)**을 함께 보냄
+7. 서버에서 해당 ID에 대한 정보를 db에서 읽고, **cookie specific action**을 취함 
+
+### Cookie의 기능
+
+- user session state 사용 (Web e-mail, 장바구니 기능)
+- authorization (인증)
+- recommendations (웹 서버에서는 사용자의 데이터를 수집한 데이터 바탕으로 추천 또는 광고 제공)
+
+### Cookie and Privacy
+- 사이트가 사용자에 대한 정보를 학습할 수 있음
+- 사이트에게 이름과 email을 제공
+
+<br>
+
+## Web Caches (proxy server)
+
+### 목적
+웹 캐시(proxy server)를 사용해 origin 서버 없이 object를 얻기 위함. 응답 시간 단축, 트래픽 줄여 비용 감축
+<img width="565" alt="스크린샷 2022-09-05 오전 12 57 48" src="https://user-images.githubusercontent.com/81469717/189076507-9d338f41-0df9-4dd5-8c89-56b668f1229a.png">
+
+- 사용자는 브라우저를 설정: 캐시를 통해 Web에 접근하도록
+- 브라우저는 HTTP request를 로컬에 있는 캐시로 보냄
+  - 캐시에 Object가 존재하면 해당 Object를 사용자에게 전송
+  - 캐시에 Object없으면 orgin server에 요청
+- 웹 캐시는 클라이언트, 서버 역할 모두 수행
+
+
+- 응답 시간을 단축 가능
+- 보통 기관, 회사, residentail ISP에서 사용
+- 트래픽을 줄여서 비용을 줄 일 수 있음
+- poor Content provider에서 유용
+- P2P file sharing에서 유용
+
+### Cache와 서버 데이터간 동기화 : Conditional GET
+
+웹 캐시와 서버간 데이터의 동기화를 헤더를 사용해서 확인
+
+<img width="549" alt="스크린샷 2022-09-08 오전 11 47 16" src="https://user-images.githubusercontent.com/81469717/189076794-a94088e1-9529-4407-aa66-953cae82ea3c.png">
+
+- `last-modified-since <date>` 이후에 데이터가 바뀌었으면 서버는 새로운 데이터와 함께 `200 OK` 응답
+- `last-modified-since <date>` 이후에 데이터가 바뀌지 않았으면 서버는 `304 Not Modified` 응답
+- 매번 웹 캐시가 서버에게 확인을 요청하면 캐시를 사용하지 않을 때와 똑같이 트래픽을 사용할테니~
+
