@@ -226,3 +226,81 @@
         - 클라이언트의 컨택 없이는 매핑 테이블이 생길 수 없고, 클라이언트는 서버의 IP를 모르면 컨택할 수 없기 때문에 결국 NAT 사용 불가
         - 해결: static NAT(수동적으로 테이블을 작성), UPNP
 - IP주소 부족 문제는 IPv6을 사용함으로써 해결 가능
+
+<br>
+
+# ICMP (Internet Control Message Protocol)
+
+
+- 호스트-호스트, 호스트-라우터, 라우터-라우터간에 네트워크 계층 정보(살아있는지, 에러가 있는지)를 주고받기 위한 프로토콜
+    - error reporting: unreachable host, network, port, protocol
+    - ehco request/reply (used by ping)
+- IP를 바탕으로 만들어진 프로토콜 (IP datagram으로 캡슐화됨)
+- ICP message의 구성
+    - type
+    - code
+    - 에러 때문에 보내지 못하는 IP datagram의 첫번째 8byte
+- 사용 예시
+    - 목적지 port가 없는 경우 source에게 알리기위해
+    - TTL이 만료된 경우 source에게 알리기위해
+    - 살아있는지 확인하기 위해 (echo request, echo reply, ping을 보내면 ping으로 대답해야함)
+    - 라우터 advertisement, discovery (라우팅 알고리즘 계산하기 위해
+
+<img width="642" alt="icmp" src="https://user-images.githubusercontent.com/81469717/218314617-58c07323-cf79-499a-ade5-254c3f17244d.png">
+
+<br>
+
+### (ICMP 응용) 네트워크 애플리케이션 프로그램 : Traceroute
+
+: 지나가는 라우터의 주소. 딜레이 시간(RTT) 측정
+
+<img width="642" alt="traceroute" src="https://user-images.githubusercontent.com/81469717/218314636-ed367882-4140-4653-bd51-f093b0944568.png">
+
+
+원리:
+
+- ICMP를 활용함
+- 3개가 한 쌍인 UDP segement 를 TTL을 1씩 증가시켜서 연속해서 내보냄
+    - 첫번째 세트의 TTL = 1, 두번째 세트의 TTL = 2 …..
+    - 존재하지 않는 port number를 기재함
+- TTL이 만료될 때 ICMP가 보내짐(n번째 라우터의 주소와 함께)
+- 소스는 ICMP가 도착하는 시간과 UDP segement를 보낸 시간을 체크해서 RTT계산
+- dest port unreachable이라는 메시지가 오면 소스는 중단 (목적지에 도착했다는 것을 의미)
+    
+<img width="642" alt="traceroute_icmp" src="https://user-images.githubusercontent.com/81469717/218314667-0a471b5e-b25d-4d30-a9e4-552c064e65ed.png">
+
+<br>
+
+# IPv6
+
+- 차세대 주소 시스템
+- IPv6 개발 동기: IPv4, 2^32 bit 주소공간이 완전히 할당될 것임
+    - CIDR, DHCP, NAT로 해결하려고함
+- 128bit를 사용, 즉 2^128개의 주소공간
+- bandwidth가 커지면서 **라우터의 패킷 처리 속도를 줄이는 것**이 또 다른 과제임
+    - 고정 길이 40 byte header
+        - next header라는 field 추가됨. 다음 header에 대한 정보 실음 (upper layer field는 없어짐)
+    - fragmentation 불가
+        - 라우터에서 datagram이 너무 크면 드롭시키고, ICMP packet too big으로 알림 (이건 ICMPv6에 추가로 정의되어있음)
+        - 소스에서 fragmentation을 하도록함
+- qos를 지원할 수  있는 필드를 추가
+    - priority, flow label 필드
+- checksum 필드 없어짐
+- option 필드 없어짐
+- upper layer 필드 없어짐
+- ICMPv6: 새로운 버전의 ICMP
+    - 메시지 타입 추가 (ex. “Packet Too Big”)
+    - 멀티캐스트 그룹 관리 기능
+<img width="642" alt="ipv6format" src="https://user-images.githubusercontent.com/81469717/218314719-25170ebc-dcfc-4c10-90db-b260087e1e38.png">
+
+
+## IPv4에서 IPv6로의 전환
+
+<img width="642" alt="transition" src="https://user-images.githubusercontent.com/81469717/218314756-667e2068-638e-465c-a38d-1e7e5d7966e8.png">
+
+
+- 동시에 라우터의 IPv6 프로토콜을 탑재하는 것이 불가능
+- Tunneling : IPv6를 IPv4안에 캡슐화
+    
+<img width="642" alt="tunneling" src="https://user-images.githubusercontent.com/81469717/218314768-55d9ab33-c010-4e3d-ac9c-10eae63919d1.png">
+
